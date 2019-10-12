@@ -38,14 +38,8 @@ public class MostradorImagen extends JPanel{
         modifiedImage = (BufferedImage) HighGui.toBufferedImage(umbralizar(umbral));
         repaint();
     }
-    public void setImage(BufferedImage image,Integer umbral){
-        originalImage = new Mat(image.getWidth(),image.getHeight(),CvType.CV_16UC1);
-
-          for(int r=0; r<image.getWidth(); r++){
-              for(int c=0; c<image.getHeight(); c++){
-                  originalImage.put(r, c, image.getRGB(r, c));
-              }
-         }
+    public void setImage(Mat image,Integer umbral){
+        originalImage = image;
         updateImage(umbral);
         
     }

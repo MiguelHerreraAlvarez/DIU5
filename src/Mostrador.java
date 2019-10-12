@@ -15,16 +15,18 @@ import javax.swing.JPanel;
  * @author Asus
  */
 public class Mostrador extends JPanel{
-    BufferedImage image;
+    BufferedImage originalImage;
     public Mostrador(){
-        image = null;
+        originalImage = null;
     }
+    @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, this);
+        System.out.println("Esto va bien ");
+        g.drawImage(originalImage, 0, 0, this);
     }
     public void setImage(BufferedImage image){
-        this.image = image;
+        originalImage = image;
         repaint();
     }
 }
