@@ -1,20 +1,14 @@
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import static java.lang.Integer.parseInt;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
 /*
@@ -31,19 +25,23 @@ public class Practica5 extends javax.swing.JFrame {
     /**
      * Creates new form Practica5
      */
+    String messageAbout = "Umbralizador es una aplicación de tratamiento de imágenes.\nA partir"
+            + " de una imagen cargada por el usuario se puede umbralizar obteniendo una nueva +"
+            + "imagen que dependerá\ndel factor umbral introducido por el usuario, pudiendo "
+            + "descargar esta imagen resultante.\nCreadores: Víctor Herrera Delgado y Miguel"
+            + " Herrera Álvarez.\nVersión: 1.0\n"
+            + "Versión de Java: 1.8.0_181 "
+                + "";
     BufferedImage originalImage = null;
     JFileChooser fc = new JFileChooser();
     Integer umbral;
     public Practica5() {
         initComponents();
         optionSalir.setMnemonic('P');
-        FileNameExtensionFilter filtro = null;
-        FileNameExtensionFilter filtro2 = null;
         umbral  = 128;
-        filtro = new FileNameExtensionFilter("ArchivosJPG","jpg","jpeg");
-        
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("ArchivosJPG","jpg","jpeg");
         fc.addChoosableFileFilter(filtro);
-        filtro2 = new FileNameExtensionFilter("ArchivosPNG","png");
+        FileNameExtensionFilter filtro2 = new FileNameExtensionFilter("ArchivosPNG","png");
         fc.addChoosableFileFilter(filtro2);
         fc.setAcceptAllFileFilterUsed(false);
     }
@@ -146,6 +144,11 @@ public class Practica5 extends javax.swing.JFrame {
         helpMenu.setText("Ayuda");
 
         optionAbout.setText("Acerca de");
+        optionAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionAboutActionPerformed(evt);
+            }
+        });
         helpMenu.add(optionAbout);
 
         jMenuBar1.add(helpMenu);
@@ -194,11 +197,22 @@ public class Practica5 extends javax.swing.JFrame {
 
     private void optionUmbralizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionUmbralizarActionPerformed
         // TODO add your handling code here:
-        String res =JOptionPane.showInputDialog(null,"Intoruzca el valor del umbral (entre 0 y 255)",umbral);
-        if(res != null && originalImage !=null && res.matches("[0-9]+") && parseInt(res) < 256 && parseInt(res) >= 0){
-            System.out.println("El valor de umbralización es " + res);
-            mostradorImagen1.updateImage(parseInt(res));
-            umbral = parseInt(res);
+        
+        while(true){
+            if(originalImage ==null) {
+                JOptionPane.showMessageDialog(null,"No hay ninguna imágen cargada","Error",JOptionPane.ERROR_MESSAGE);
+                break;
+            }
+            String res =JOptionPane.showInputDialog(null,"Introduzca el valor del umbral (entre 0 y 255)",umbral);
+            if(res == null) break;
+            if(res.matches("[0-9]+") && parseInt(res) < 256 && parseInt(res) >= 0){
+                System.out.println("El valor de umbralización es " + res);
+                mostradorImagen1.updateImage(parseInt(res));
+                umbral = parseInt(res);
+                break;
+            }else{
+                JOptionPane.showMessageDialog(null,"Introduzca solo números del 0 al 255","Error",JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_optionUmbralizarActionPerformed
 
@@ -223,16 +237,16 @@ public class Practica5 extends javax.swing.JFrame {
 
     private void optionGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionGuardarActionPerformed
         // TODO add your handling code here:
-        int res = fc.showSaveDialog(null);
-        if (res == JFileChooser.APPROVE_OPTION) {
-            File fichero = fc.getSelectedFile(); 
+        
+        if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+   
             
             //Mat images = Imgcodecs.imread(fichero.getAbsolutePath());
             try {
                 if(fc.getFileFilter().getDescription().equals("ArchivosJPG")){
-                    ImageIO.write(mostradorImagen1.getImage(), "jpg",fichero);
+                    ImageIO.write(mostradorImagen1.getImage(), "jpg",new File(fc.getSelectedFile().getAbsolutePath() + ".jpg"));
                 }else{
-                    ImageIO.write(mostradorImagen1.getImage(), "png",fichero);
+                    ImageIO.write(mostradorImagen1.getImage(), "png",new File(fc.getSelectedFile().getAbsolutePath() + ".png"));
                 }
             } catch (IOException e) {
                 System.out.println("Error de escritura");
@@ -240,6 +254,12 @@ public class Practica5 extends javax.swing.JFrame {
         }
        
     }//GEN-LAST:event_optionGuardarActionPerformed
+
+    private void optionAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionAboutActionPerformed
+        // TODO add your handling code here:
+        
+        JOptionPane.showMessageDialog(null,messageAbout,"Acerca de",JOptionPane.PLAIN_MESSAGE);
+    }//GEN-LAST:event_optionAboutActionPerformed
 
     /**
      * @param args the command line arguments
